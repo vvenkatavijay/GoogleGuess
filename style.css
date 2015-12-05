@@ -1,0 +1,119 @@
+.container {
+	text-align: center;
+}
+
+h1, p{
+	text-align: center;
+}
+
+#choose_category {
+	margin: auto;
+	text-align: center;
+}
+
+#question {
+	display: inline-block;
+	background-color: white;
+	padding-right: 5px;
+	margin-right: 0px;
+	border-right: 0px;
+}
+
+#user_form {
+	display: inline-block;
+	text-align: center;
+	margin: auto;
+	background-color: white;
+	vertical-align: middle;
+	border: 1px black solid;
+	margin-top: 10px;
+	padding-top: 10px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+
+#user_input {
+	display: inline-block;
+	height: 200%;
+	width: 60%;
+	border: 0px;
+	padding-left: 0px;
+	margin-left: 0px;
+	outline: none;
+	font-size: 150%;
+}
+
+table {
+	margin: auto;
+	border-collapse: collapse;
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+
+td {
+	padding: 10px;
+	border: 1px silver solid;
+	border-collapse: collapse;
+	width: 300px;
+}
+
+#buttons {
+	margin-bottom: 60px;
+}
+
+.stats {
+	display: inline-block;
+}
+
+#guesses_box, #score_box {
+	display: inline-block;
+	width: 50px;
+}
+
+label {
+	display: block;
+}
+
+/*
+#buttons {
+	margin: auto;
+	padding: 10px;
+	width: 200px;
+}
+
+#next {
+	display: inline-block;
+	margin: auto;
+	padding: 20px;
+}
+
+#reset {
+	display: inline-block;
+	margin: auto;
+	padding: 20px;
+}
+
+label {
+	display: inline-block;
+	width: 50px;
+}
+
+#guesses_box, #score_box {
+	display: inline-block;
+	width: 50px;
+}
+
+#stats {
+	margin: auto;
+	width: 300px;
+	text-align: center;
+}
+
+#people, #other {
+	display: inline;
+}
+
+#choose_category {
+	width: auto;
+	margin: auto;
+} */
