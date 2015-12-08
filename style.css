@@ -30,6 +30,7 @@ h1, p{
 	padding-top: 10px;
 	margin-bottom: 0px;
 	padding-bottom: 0px;
+	width: 60%;
 }
 
 #user_input {
@@ -55,6 +56,7 @@ td {
 	border: 1px silver solid;
 	border-collapse: collapse;
 	width: 300px;
+	font-size: 150%;
 }
 
 #buttons {

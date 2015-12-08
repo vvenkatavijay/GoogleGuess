@@ -20,8 +20,7 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			console.log("Ready ...");
-			console.log(questions);
-
+		
 			$("#reset").hide();
 			$("#next").hide();
 			$("#user_input").hide();
@@ -31,22 +30,50 @@
 
 			var list;
 			var length;
+			var answers;
+			var people_used = questions_used = other_used = [0,1,2,3,4,5];
+			var index;
+
 
 			$("#people").click(function(){
-				list = JSON.parse(questions_people);
-				length = list['questions'].length;
+				//list = JSON.parse(questions_people);
+				list = questions_api_people;
+				//length = list['questions'].length;
+				length = list.length;				
 				console.log(length);
-				$("#next").click();
+
+				ind = Math.floor(Math.random()*people_used.length);
+				index = people_used[ind];
+				people_used.splice(ind, 1);
+
+				console.log(index);
+				console.log(people_used);
+				start();
+			});
+
+			$("#question_button").click(function(){
+				//list = JSON.parse(questions_people);
+				list = questions_api_question;
+				//length = list['questions'].length;
+				length = list.length;				
+				console.log(length);
+
+				ind = Math.floor(Math.random()*questions_used.length);
+				index = questions_used[ind];
+				people_used.splice(ind, 1);
+
+				console.log(index);
+				console.log(people_used);
+				start();
 			});
 			
 			var started = false;
-			var index;
 			var total_score = 0;
 			var guesses = 0;
 			var round = 0;
 			var round_score = 0;
 
-			$("#next").click(function(){
+			function start() {
 				round = round + 1;
 				started = true;
 				guesses = 0;
@@ -54,12 +81,11 @@
 				$("#reset").show();
 				$("#next").show();
 				$("#category").hide();
-				index = Math.floor(Math.random()*length);
-				var question = list['questions'][index];
+				var question = list[index];
 
 				console.log("Plugging in google autocomplete API here ...");
 
-				url = "http://suggestqueries.google.com/complete/search?client=firefox&q=" + list['questions'][index]["question"];
+				url = "http://suggestqueries.google.com/complete/search?client=firefox&q=" + question;
 				console.log("Url is " + url);
 				$.ajax({
 					url: url,
@@ -68,6 +94,16 @@
 					success: function(data) {
 						console.log("Response successful")
 						console.log(data);
+
+						prefix = data[0].toLowerCase() + ' ';
+						console.log(prefix);
+						answers = data[1];
+
+						for(i = 0; i < answers.length; i++)
+    						answers[i] = answers[i].replace(prefix, '');
+
+    					console.log(answers)
+
 					},
 					error: function() {
 						console.log("Failed to fetch results");
@@ -84,15 +120,32 @@
 				$("#user_input").removeAttr('disabled');
 				$("#guess_phrase").show();
 				$("#user_input").focus();
-				$("#question").html(list['questions'][index]["question"]);
+				$("#question").html(question);
 				$("#question").show();
-				$("#option_1").html("1");
-				$("#option_2").html("2");
-				$("#option_3").html("3");
-				$("#option_4").html("4");
+				hide_options();
 
 				$("#next").attr("value", "Next");
 
+				$("#guesses_box").html(guesses);
+				$("#round_box").html(round);
+				$("#round_score_box").html(round_score);
+			}
+
+			$("#next").click(function(){
+				$("#reset").hide();
+				$("#next").hide();
+				$("#category").show();
+				$("#choose_category").show();
+				$("#guess_phrase").hide();
+				$("#user_input").hide();
+				$("#user_form").hide();
+				$("#question").hide();
+
+				hide_options();
+				$("#next").attr("value", "start");
+				$("#reset").attr("hidden", true);
+
+				$("#total_score_box").html(total_score);
 				$("#guesses_box").html(guesses);
 				$("#round_box").html(round);
 				$("#round_score_box").html(round_score);
@@ -113,10 +166,7 @@
 				$("#user_form").hide();
 				$("#question").hide();
 
-				$("#option_1").html("1");
-				$("#option_2").html("2");
-				$("#option_3").html("3");
-				$("#option_4").html("4");
+				hide_options();
 				$("#next").attr("value", "start");
 				$("#reset").attr("hidden", true);
 
@@ -131,43 +181,75 @@
 				e.preventDefault(); 
 				console.log("The submit button has been clicked");
 
-				if ($("#user_input").val().toUpperCase() == list['questions'][index]["1"].toUpperCase()) {
+				if ($("#user_input").val().toUpperCase() == answers[0].toUpperCase()) {
 					console.log("Matches option 1");
 					$("#user_input").val("");
 					$("#option_1").hide();
-					$("#option_1").html(list['questions'][index]["1"]);
+					$("#option_1").html(answers[0]);
 					$("#option_1").show(400);
 					round_score = round_score + 10;
 					total_score = total_score + 10;
-				} else if ($("#user_input").val().toUpperCase() == list['questions'][index]["2"].toUpperCase()) {
+				} else if ($("#user_input").val().toUpperCase() == answers[1].toUpperCase()) {
 					console.log("Matches option 2");
 					$("#user_input").val("");
 					$("#option_2").hide();
-					$("#option_2").html(list['questions'][index]["2"]);
+					$("#option_2").html(answers[1]);
 					$("#option_2").show(400);
-					round_score = round_score + 8;
-					total_score = total_score + 8;
-				} else if ($("#user_input").val().toUpperCase() == list['questions'][index]["3"].toUpperCase()) {
+					round_score = round_score + 9;
+					total_score = total_score + 9;
+				} else if ($("#user_input").val().toUpperCase() == answers[2].toUpperCase()) {
 					console.log("Matches option 3");
 					$("#user_input").val("");
 					$("#option_3").hide();
-					$("#option_3").html(list['questions'][index]["3"]);
+					$("#option_3").html(answers[2]);
 					$("#option_3").show(400);
-					round_score = round_score + 6;
-					total_score = total_score + 6;
-				} else if ($("#user_input").val().toUpperCase() == list['questions'][index]["4"].toUpperCase()) {
+					round_score = round_score + 8;
+					total_score = total_score + 8;
+				} else if ($("#user_input").val().toUpperCase() == answers[3].toUpperCase()) {
 					console.log("Matches option 4");
 					$("#user_input").val("");
 					$("#option_4").hide();
-					$("#option_4").html(list['questions'][index]["4"]);
+					$("#option_4").html(answers[3]);
 					$("#option_4").show(400);
+					round_score = round_score + 7;
+					total_score = total_score + 7;
+				} else if ($("#user_input").val().toUpperCase() == answers[4].toUpperCase()) {
+					console.log("Matches option 5");
+					$("#user_input").val("");
+					$("#option_5").hide();
+					$("#option_5").html(answers[4]);
+					$("#option_5").show(400);
+					round_score = round_score + 6;
+					total_score = total_score + 6;
+				} else if ($("#user_input").val().toUpperCase() == answers[5].toUpperCase()) {
+					console.log("Matches option 6");
+					$("#user_input").val("");
+					$("#option_6").hide();
+					$("#option_6").html(answers[5]);
+					$("#option_6").show(400);
+					round_score = round_score + 5;
+					total_score = total_score + 5;
+				} else if ($("#user_input").val().toUpperCase() == answers[6].toUpperCase()) {
+					console.log("Matches option 7");
+					$("#user_input").val("");
+					$("#option_7").hide();
+					$("#option_7").html(answers[6]);
+					$("#option_7").show(400);
 					round_score = round_score + 4;
 					total_score = total_score + 4;
+				} else if ($("#user_input").val().toUpperCase() == answers[7].toUpperCase()) {
+					console.log("Matches option 8");
+					$("#user_input").val("");
+					$("#option_8").hide();
+					$("#option_8").html(answers[7]);
+					$("#option_8").show(400);
+					round_score = round_score + 3;
+					total_score = total_score + 3;
 				} else {
 					$("#user_input").val("");
 					console.log("Choice not present");
 					console.log(guesses);
-					if(guesses >= 3) {
+					if(guesses >= 2) {
 						console.log("Inside guesses > 3");
 						show_all();
 					} else {
@@ -185,11 +267,26 @@
 			function show_all() {
 				console.log("Inside show_all");
 				$("#user_input").attr('disabled', 'disabled');
-				$("#option_1").html(list['questions'][index]["1"]);
-				$("#option_2").html(list['questions'][index]["2"]);
-				$("#option_3").html(list['questions'][index]["3"]);
-				$("#option_4").html(list['questions'][index]["4"]);
+				$("#option_1").html(answers[0]);
+				$("#option_2").html(answers[1]);
+				$("#option_3").html(answers[2]);
+				$("#option_4").html(answers[3]);
+				$("#option_5").html(answers[4]);
+				$("#option_6").html(answers[5]);
+				$("#option_7").html(answers[6]);
+				$("#option_8").html(answers[7]);
 			};
+
+			function hide_options() {
+				$("#option_1").html("1");
+				$("#option_2").html("2");
+				$("#option_3").html("3");
+				$("#option_4").html("4");
+				$("#option_5").html("5");
+				$("#option_6").html("6");
+				$("#option_7").html("7");
+				$("#option_8").html("8");
+			}
 		});
 	</script>
 </head>
@@ -199,6 +296,7 @@
 		<p id="category">Choose a category to start guessing!</p>
 		<div id="choose_category">
 			<button id="people" class="btn btn-lg btn-default">People</button>
+			<button id="question_button" class="btn btn-lg btn-default">Questions</button>
 			<button id="other" class="btn btn-lg btn-default">Other</button>
 		</div>
 		<p id="guess_phrase">Can you guess how google autocompletes this query?</p>
@@ -215,6 +313,14 @@
 			<tr>
 				<td> <span id="option_3">3</span></td>
 				<td> <span id="option_4">4</span></td>
+			</tr>
+			<tr>
+				<td> <span id="option_5">5</span></td>
+				<td> <span id="option_6">6</span></td>
+			</tr>
+			<tr>
+				<td> <span id="option_7">7</span></td>
+				<td> <span id="option_8">8</span></td>
 			</tr>
 		</table>
 		<div id="buttons">
