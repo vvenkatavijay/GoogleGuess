@@ -9,4 +9,4 @@ var questions_places = '{ "questions" : [' +
 
   var questions_api_people = ["Sachin", "Rahul", "Aamir", "Sanjay", "Abdul", "Siddharth"];
 
-  var questions_api_question = ["I hate it when", "Why is", "What is the biggest"];
+  var questions_api_question = ["I hate it when", "Why is", "What is the biggest", "Who is", "why is bollywood", "why is cricket"];

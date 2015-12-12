@@ -27,13 +27,17 @@
 			$("#question").hide();
 			$("#user_form").hide();
 			$("#guess_phrase").hide();
+			$("#cross_mark").hide();
+			hide_options();
 
 			var list;
 			var length;
 			var answers;
 			var people_used = questions_used = other_used = [0,1,2,3,4,5];
 			var index;
-
+			var width = $(window).width();
+			console.log(width);
+			$("#cross_mark").css("left", "-" + width/3 + "px")
 
 			$("#people").click(function(){
 				//list = JSON.parse(questions_people);
@@ -85,7 +89,7 @@
 
 				console.log("Plugging in google autocomplete API here ...");
 
-				url = "http://suggestqueries.google.com/complete/search?client=firefox&q=" + question;
+				url = "http://suggestqueries.google.com/complete/search?client=firefox&q=" + question + " ";
 				console.log("Url is " + url);
 				$.ajax({
 					url: url,
@@ -95,7 +99,7 @@
 						console.log("Response successful")
 						console.log(data);
 
-						prefix = data[0].toLowerCase() + ' ';
+						prefix = data[0].toLowerCase();
 						console.log(prefix);
 						answers = data[1];
 
@@ -122,6 +126,7 @@
 				$("#user_input").focus();
 				$("#question").html(question);
 				$("#question").show();
+				$("#cross_mark").css("left","-" + width/3 + "px");
 				hide_options();
 
 				$("#next").attr("value", "Next");
@@ -149,6 +154,7 @@
 				$("#guesses_box").html(guesses);
 				$("#round_box").html(round);
 				$("#round_score_box").html(round_score);
+				$("#cross_mark").css("left","-" + width/3 + "px");
 			});
 
 			$("#reset").click(function(){
@@ -165,6 +171,7 @@
 				$("#user_input").hide();
 				$("#user_form").hide();
 				$("#question").hide();
+				$("#cross_mark").css("left","-" + width/3 + "px");
 
 				hide_options();
 				$("#next").attr("value", "start");
@@ -180,75 +187,38 @@
 
 				e.preventDefault(); 
 				console.log("The submit button has been clicked");
+				var match_found = false;
 
-				if ($("#user_input").val().toUpperCase() == answers[0].toUpperCase()) {
-					console.log("Matches option 1");
-					$("#user_input").val("");
-					$("#option_1").hide();
-					$("#option_1").html(answers[0]);
-					$("#option_1").show(400);
-					round_score = round_score + 10;
-					total_score = total_score + 10;
-				} else if ($("#user_input").val().toUpperCase() == answers[1].toUpperCase()) {
-					console.log("Matches option 2");
-					$("#user_input").val("");
-					$("#option_2").hide();
-					$("#option_2").html(answers[1]);
-					$("#option_2").show(400);
-					round_score = round_score + 9;
-					total_score = total_score + 9;
-				} else if ($("#user_input").val().toUpperCase() == answers[2].toUpperCase()) {
-					console.log("Matches option 3");
-					$("#user_input").val("");
-					$("#option_3").hide();
-					$("#option_3").html(answers[2]);
-					$("#option_3").show(400);
-					round_score = round_score + 8;
-					total_score = total_score + 8;
-				} else if ($("#user_input").val().toUpperCase() == answers[3].toUpperCase()) {
-					console.log("Matches option 4");
-					$("#user_input").val("");
-					$("#option_4").hide();
-					$("#option_4").html(answers[3]);
-					$("#option_4").show(400);
-					round_score = round_score + 7;
-					total_score = total_score + 7;
-				} else if ($("#user_input").val().toUpperCase() == answers[4].toUpperCase()) {
-					console.log("Matches option 5");
-					$("#user_input").val("");
-					$("#option_5").hide();
-					$("#option_5").html(answers[4]);
-					$("#option_5").show(400);
-					round_score = round_score + 6;
-					total_score = total_score + 6;
-				} else if ($("#user_input").val().toUpperCase() == answers[5].toUpperCase()) {
-					console.log("Matches option 6");
-					$("#user_input").val("");
-					$("#option_6").hide();
-					$("#option_6").html(answers[5]);
-					$("#option_6").show(400);
-					round_score = round_score + 5;
-					total_score = total_score + 5;
-				} else if ($("#user_input").val().toUpperCase() == answers[6].toUpperCase()) {
-					console.log("Matches option 7");
-					$("#user_input").val("");
-					$("#option_7").hide();
-					$("#option_7").html(answers[6]);
-					$("#option_7").show(400);
-					round_score = round_score + 4;
-					total_score = total_score + 4;
-				} else if ($("#user_input").val().toUpperCase() == answers[7].toUpperCase()) {
-					console.log("Matches option 8");
-					$("#user_input").val("");
-					$("#option_8").hide();
-					$("#option_8").html(answers[7]);
-					$("#option_8").show(400);
-					round_score = round_score + 3;
-					total_score = total_score + 3;
-				} else {
+				for (var i = 0; i < 8; i++) {
+					if (check_if_present(answers[i].toUpperCase(), $("#user_input").val().toUpperCase())) {
+						option = "#option_" + (i+1);
+						console.log("Matches option " + (i+1));
+						$("#user_input").val("");
+						$(option).hide();
+						$(option).html(answers[i]);
+						$(option).show(400);
+						round_score = round_score + 10;
+						total_score = total_score + 10;
+						match_found = true;
+						break;
+					}
+				};
+
+				if (!match_found) {
 					$("#user_input").val("");
 					console.log("Choice not present");
 					console.log(guesses);
+
+					var cross_pos = $("#cross_mark").css("left");
+					console.log(cross_pos);
+					cross_pos = parseInt(cross_pos.substring(0, cross_pos.length - 2)) + width/3
+					cross_pos = cross_pos + "px"
+					$("#cross_mark").css("left",cross_pos);
+					console.log(cross_pos);
+
+					$("#cross_mark").toggle(50);
+					$("#cross_mark").toggle(50);
+
 					if(guesses >= 2) {
 						console.log("Inside guesses > 3");
 						show_all();
@@ -264,6 +234,21 @@
 				return false;
 			});	
 
+			function check_if_present(answer, word) {
+				words = answer.split(" ");
+				console.log(answer)
+				console.log(word)
+				for (i=0; i<words.length; i++) {
+					if (words[i] == word) {
+						console.log(words[i]);
+						console.log(word);
+						return true
+					}
+				}
+
+				return false
+			}
+
 			function show_all() {
 				console.log("Inside show_all");
 				$("#user_input").attr('disabled', 'disabled');
@@ -278,14 +263,14 @@
 			};
 
 			function hide_options() {
-				$("#option_1").html("1");
-				$("#option_2").html("2");
-				$("#option_3").html("3");
-				$("#option_4").html("4");
-				$("#option_5").html("5");
-				$("#option_6").html("6");
-				$("#option_7").html("7");
-				$("#option_8").html("8");
+				$("#option_1").html("10 pts");
+				$("#option_2").html("9 pts");
+				$("#option_3").html("8 pts");
+				$("#option_4").html("7 pts");
+				$("#option_5").html("6 pts");
+				$("#option_6").html("5 pts");
+				$("#option_7").html("4 pts");
+				$("#option_8").html("3 pts");
 			}
 		});
 	</script>
@@ -342,6 +327,8 @@
 		<div class="stats col-md-2">
 			<label>Round Score</label>
 			<p id="round_score_box">0</p>
+		</div>
+		<div id="cross_mark">
 		</div>
 	</div>
 </body>
