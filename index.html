@@ -99,12 +99,12 @@
 						console.log("Response successful")
 						console.log(data);
 
-						prefix = data[0].toLowerCase();
+						prefix = data[0].toLowerCase().trim();
 						console.log(prefix);
 						answers = data[1];
 
 						for(i = 0; i < answers.length; i++)
-    						answers[i] = answers[i].replace(prefix, '');
+    						answers[i] = answers[i].replace(prefix, '').trim();
 
     					console.log(answers)
 
@@ -206,7 +206,7 @@
 						continue;
 					};
 
-					if (check_if_present(answers[i].toUpperCase(), $("#user_input").val().toUpperCase())) {
+					if (check_if_present(answers[i].toUpperCase(), $("#user_input").val().toUpperCase().trim())) {
 						option = "#option_" + (i+1);
 						console.log("Matches option " + (i+1));
 						$("#user_input").val("");
@@ -256,12 +256,17 @@
 				words = answer.split(" ");
 				console.log(answer)
 				console.log(word)
+
 				for (i=0; i<words.length; i++) {
 					if (words[i] == word) {
 						console.log(words[i]);
 						console.log(word);
 						return true
 					}
+				}
+
+				if(answer.indexOf(word) > -1 && word.indexOf(" ") > -1){
+					return true
 				}
 
 				return false
