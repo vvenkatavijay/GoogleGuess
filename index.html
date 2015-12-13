@@ -4,7 +4,6 @@
 	<meta charset="UTF-8">
 	<title>Google Guess!</title>
 
-	<link rel="stylesheet" type="text/css" href="normalize.css">
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
@@ -36,6 +35,7 @@
 			var people_used = questions_used = other_used = [0,1,2,3,4,5];
 			var index;
 			var width = $(window).width();
+			var options_used = [];
 			console.log(width);
 			$("#cross_mark").css("left", "-" + width/3 + "px")
 
@@ -134,6 +134,7 @@
 				$("#guesses_box").html(guesses);
 				$("#round_box").html(round);
 				$("#round_score_box").html(round_score);
+				options_used = [];
 			}
 
 			$("#next").click(function(){
@@ -155,6 +156,7 @@
 				$("#round_box").html(round);
 				$("#round_score_box").html(round_score);
 				$("#cross_mark").css("left","-" + width/3 + "px");
+				options_used = [];
 			});
 
 			$("#reset").click(function(){
@@ -181,6 +183,7 @@
 				$("#guesses_box").html(guesses);
 				$("#round_box").html(round);
 				$("#round_score_box").html(round_score);
+				options_used = [];
 			});
 
 			$("#user_form").submit(function(e){
@@ -189,7 +192,20 @@
 				console.log("The submit button has been clicked");
 				var match_found = false;
 
+				var word = $("#user_input").val().toUpperCase()
+				console.log(skip_words.indexOf(word));
+				if (skip_words.indexOf(word) != -1) {
+					alert("Helping words like " + word + " do not count.");
+					$("#user_input").val("");
+					return false
+				}
+
 				for (var i = 0; i < 8; i++) {
+					if (options_used.indexOf(i) > -1 ) {
+						match_found = false;
+						continue;
+					};
+
 					if (check_if_present(answers[i].toUpperCase(), $("#user_input").val().toUpperCase())) {
 						option = "#option_" + (i+1);
 						console.log("Matches option " + (i+1));
@@ -200,6 +216,7 @@
 						round_score = round_score + 10;
 						total_score = total_score + 10;
 						match_found = true;
+						options_used.push(i);
 						break;
 					}
 				};
@@ -235,6 +252,7 @@
 			});	
 
 			function check_if_present(answer, word) {
+
 				words = answer.split(" ");
 				console.log(answer)
 				console.log(word)
